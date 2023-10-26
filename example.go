@@ -1,24 +1,25 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
-	"github.com/Dewberry/papigoplug/papigoplug"
+	plug "github.com/Dewberry/papigoplug/papigoplug"
 )
 
 func main() {
-	allowedParams := papigoplug.PluginParams{
+	plug.InitLog("info")
+
+	allowedParams := plug.PluginParams{
 		Required: []string{"first", "last"},
 		Optional: []string{"middle"},
 	}
 
-	params, err := papigoplug.ParseInput(os.Args, allowedParams)
+	params, err := plug.ParseInput(os.Args, allowedParams)
 	if err != nil {
-		panic(err)
+		plug.Log.Fatal(err)
 	}
-	fmt.Printf("Params provided: %s\n", params)
+	plug.Log.Infof("Params provided: %s", params)
 
 	results := map[string]interface{}{"foo": "bar", "success": true}
-	papigoplug.PrintResults(results)
+	plug.PrintResults(results)
 }
