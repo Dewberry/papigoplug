@@ -15,11 +15,11 @@ After initializing the log, it can be accessed like `papigoplug.Log.Info("hello,
 package main
 
 import (
-	papigoplug "github.com/Dewberry/papigoplug/papigoplug"
+    papigoplug "github.com/Dewberry/papigoplug/papigoplug"
 )
 
 func main() {
-	papigoplug.InitLog("info")
+    papigoplug.InitLog("info")
     // Now it's safe to call other papigoplug functions that might use Log.
 }
 ```
