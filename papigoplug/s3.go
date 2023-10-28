@@ -43,8 +43,8 @@ func AWSGetSession() (sess *session.Session, err error) {
 // S3Download creates a local file a blob from s3 and saves it to a local file path, using multipart concurrency.
 // The file is first downloaded to a temporary location on the disk, and then is renamed/moved to the final destination.
 func S3Download(sess *session.Session, bucket, key, fileName string) (err error) {
-	s3url := fmt.Sprintf("s3://%q/%q", bucket, key)
-	Log.Debugf("Downloading %q -> %q", s3url, fileName)
+	s3url := fmt.Sprintf("s3://%s/%s", bucket, key)
+	Log.Debugf("Downloading %s -> %s", s3url, fileName)
 
 	// Download to a temporary file
 	tmpFile, err := os.CreateTemp("", "")
@@ -61,39 +61,39 @@ func S3Download(sess *session.Session, bucket, key, fileName string) (err error)
 			Key:    aws.String(key),
 		})
 	if err != nil {
-		Log.Errorf("Failed to download %q: %s", s3url, err)
+		Log.Errorf("Failed to download %s: %s", s3url, err)
 		return
 	}
 	err = tmpFile.Sync()
 	if err != nil {
-		Log.Errorf("Failed to download %q: %s", s3url, err)
+		Log.Errorf("Failed to download %s: %s", s3url, err)
 		return
 	}
 
 	// Rename the temporary file to the final name
 	err = os.MkdirAll(filepath.Dir(fileName), os.ModePerm)
 	if err != nil {
-		Log.Errorf("Failed to make directory tree %q: %s", filepath.Dir(fileName), err)
+		Log.Errorf("Failed to make directory tree %s: %s", filepath.Dir(fileName), err)
 		return
 	}
 	err = os.Rename(tmpFile.Name(), fileName)
 	if err != nil {
-		Log.Errorf("After downloading %q, failed to move temp file to %q: %s", s3url, fileName, err)
+		Log.Errorf("After downloading %s, failed to move temp file to %s: %s", s3url, fileName, err)
 		return
 	}
 
-	Log.Infof("Successfully downloaded %q", s3url)
+	Log.Infof("Successfully downloaded %s", s3url)
 	return
 }
 
 // S3Upload creates a blob on s3 by streaming the bytes from a local file path, using multipart concurrency.
 func S3Upload(sess *session.Session, bucket, key, fileName string) (err error) {
-	s3url := fmt.Sprintf("s3://%q/%q", bucket, key)
-	Log.Infof("Uploading %q -> %q", fileName, s3url)
+	s3url := fmt.Sprintf("s3://%s/%s", bucket, key)
+	Log.Infof("Uploading %s -> %s", fileName, s3url)
 
 	file, err := os.Open(fileName)
 	if err != nil {
-		Log.Errorf("Failed to open %q: %s", fileName, err)
+		Log.Errorf("Failed to open %s: %s", fileName, err)
 		return
 	}
 	uploader := s3manager.NewUploader(sess, func(u *s3manager.Uploader) {
@@ -105,11 +105,11 @@ func S3Upload(sess *session.Session, bucket, key, fileName string) (err error) {
 		Body:   file,
 	})
 	if err != nil {
-		Log.Errorf("Failed to upload %q -> %q: %s", fileName, s3url, err)
+		Log.Errorf("Failed to upload %s -> %s: %s", fileName, s3url, err)
 		return
 	}
 
-	Log.Infof("Successfully uploaded %q -> %q", fileName, s3url)
+	Log.Infof("Successfully uploaded %s -> %s", fileName, s3url)
 	return
 }
 
