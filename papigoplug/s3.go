@@ -42,13 +42,9 @@ func AWSGetSession() (sess *session.Session, err error) {
 
 // S3Download creates a local file a blob from s3 and saves it to a local file path, using multipart concurrency.
 // The file is first downloaded to a temporary location on the disk, and then is renamed/moved to the final destination.
-func S3Download(sess *session.Session, s3url string, fileName string) (err error) {
-	Log.Infof("Downloading %q -> %q", s3url, fileName)
-
-	bucket, key, err := S3SplitBucketKey(s3url)
-	if err != nil {
-		return
-	}
+func S3Download(sess *session.Session, bucket, key, fileName string) (err error) {
+	s3url := fmt.Sprintf("s3://%q/%q", bucket, key)
+	Log.Debugf("Downloading %q -> %q", s3url, fileName)
 
 	// Download to a temporary file
 	tmpFile, err := os.CreateTemp("", "")
@@ -91,13 +87,9 @@ func S3Download(sess *session.Session, s3url string, fileName string) (err error
 }
 
 // S3Upload creates a blob on s3 by streaming the bytes from a local file path, using multipart concurrency.
-func S3Upload(sess *session.Session, s3url string, fileName string) (err error) {
+func S3Upload(sess *session.Session, bucket, key, fileName string) (err error) {
+	s3url := fmt.Sprintf("s3://%q/%q", bucket, key)
 	Log.Infof("Uploading %q -> %q", fileName, s3url)
-
-	bucket, key, err := S3SplitBucketKey(s3url)
-	if err != nil {
-		return
-	}
 
 	file, err := os.Open(fileName)
 	if err != nil {
