@@ -23,3 +23,5 @@ func main() {
     // Now it's safe to call other papigoplug functions that might use Log.
 }
 ```
+
+See [example.go](example.go) and [papigoplug_test/papigoplug_test.go](papigoplug_test/papigoplug_test.go) for usage details.
