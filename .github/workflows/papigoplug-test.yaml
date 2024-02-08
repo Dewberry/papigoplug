@@ -1,0 +1,29 @@
+# papigoplug-test.yaml
+
+name: papigoplug-test
+
+on:
+  push:
+    branches: [main, development, tests]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  papigoplug-test-ubuntu-latest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.21.3
+        id: go
+
+      - name: Install Packages
+        run: go get -v -t -d ./...
+
+      - name: Run Tests
+        run: go test -v ./papigoplug_test/papigoplug_test.go
