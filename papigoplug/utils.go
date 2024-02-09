@@ -1,6 +1,7 @@
 package papigoplug
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -67,11 +68,16 @@ type pluginResults struct {
 // PrintResults encodes the provided map into a JSON string within key "plugin_results" and prints that.
 // This function must be called at the end of the program.
 func PrintResults(results map[string]interface{}) (err error) {
-	bytes, err := json.Marshal(pluginResults{Results: results})
-	if err != nil {
+	var buf bytes.Buffer
+	encoder := json.NewEncoder(&buf)
+	encoder.SetEscapeHTML(false) // Do not escape HTML characters
+
+	if err = encoder.Encode(pluginResults{Results: results}); err != nil {
 		return
 	}
-	fmt.Println(string(bytes))
+
+	// Use strings.TrimSpace to remove the trailing newline added by Encode.
+	fmt.Println(buf.String())
 	return
 }
 
